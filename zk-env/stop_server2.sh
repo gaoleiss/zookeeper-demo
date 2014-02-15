@@ -1,0 +1,1 @@
+./zookeeper-2/bin/zkServer.sh stop  
