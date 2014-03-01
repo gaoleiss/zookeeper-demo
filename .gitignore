@@ -8,5 +8,5 @@
 
 # Idea Files #
 /target
-*.ids
+*.idea
 /.idea/

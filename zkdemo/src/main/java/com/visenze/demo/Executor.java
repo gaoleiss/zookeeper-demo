@@ -69,7 +69,7 @@ public class Executor implements Watcher, Runnable, NodeMonitor.NodeMonitorListe
 //                    .println("USAGE: Executor hostPort znode filename program [args ...]");
 //            System.exit(2);
 //        }
-        String hostPort = "localhost:2184";
+        String hostPort = "127.0.0.1:2181,127.0.0.1:2182,127.0.0.1:2183";
         try {
             new Executor(hostPort).run();
         } catch (Exception e) {

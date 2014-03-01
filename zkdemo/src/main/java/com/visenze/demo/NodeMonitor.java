@@ -1,14 +1,14 @@
 package com.visenze.demo;
-import org.apache.zookeeper.*;
 import org.apache.zookeeper.AsyncCallback.StatCallback;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.Code;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-
-import static org.apache.zookeeper.Watcher.Event.EventType.NodeDeleted;
-import static org.apache.zookeeper.Watcher.Event.EventType.None;
 
 public class NodeMonitor implements Watcher, StatCallback {
 
