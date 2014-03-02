@@ -12,7 +12,8 @@ zookeeper-demo
       * /thrift_host:port
       * /thrift_host:port
 ```
-master节点的数据是 thrift host 和 thrift port, workers 节点是所有个计算单元。
+* 使用/master节点的记录选取的master节点， 数据是 thrift host 和 thrift port
+* 使用 /workers 的子节点记录所有计算单元
 
 	 	 	
 ###1. 所有feature job服务(feature job的实际业务不需要实现) 启动能自动注册信息到zk上，并保存配置信息在zk上。 ###
