@@ -69,7 +69,7 @@ public class FeatureServer implements Watcher {
         String path = Variable.WORK_PATH + "/" + serverId;
 
         try {
-            zk.create(path, "idle".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, createWorkerCallback, null);
+            zk.create(path, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL, createWorkerCallback, null);
             masterSelector.update(serverId);
         } catch (KeeperException e) {
             e.printStackTrace();
