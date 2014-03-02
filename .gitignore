@@ -7,6 +7,7 @@
 *.ear
 
 # Idea Files #
-/target
+*/target
 *.idea
+*.iml
 /.idea/
