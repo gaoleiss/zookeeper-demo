@@ -44,14 +44,12 @@ public class ThriftClient {
         return client;
     }
 
-    public void ping(String hostPort) {
+    public void ping(String hostPort) throws TException {
 
         FeatureThriftService.Client client = getClient(hostPort);
-        try {
-            client.ping();
-        } catch (TException e) {
-            e.printStackTrace();
-        }
+
+        client.ping();
+
 
     }
 

@@ -9,13 +9,6 @@ import java.util.Vector;
 public class LoadBalance {
     static Vector<String> thriftList = new Vector<String>();
 
-    public static void add(String thriftHostPort) {
-        thriftList.add(thriftHostPort);
-    }
-
-    public static void remove(String thriftHostPort) {
-        thriftList.remove(thriftHostPort);
-    }
 
     public static void update(Vector<String> thriftList) {
         System.out.println("lb update:\t" + thriftList);
