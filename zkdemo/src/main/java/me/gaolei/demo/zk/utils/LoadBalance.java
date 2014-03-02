@@ -19,4 +19,8 @@ public class LoadBalance {
     public void update(Vector<String> thriftList) {
         LoadBalance.thriftList = thriftList;
     }
+
+    public String get() {
+        return thriftList.get(0);
+    }
 }
