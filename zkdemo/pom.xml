@@ -51,10 +51,13 @@
                 <version>2.6</version>
                 <configuration>
                     <instrumentation>
+                        <ignores>
+                            <ignore>me/gaolei/demo/zk/thrift/FeatureThriftService*</ignore>
+                        </ignores>
                         <excludes>
-                            <exclude>me/gaolei/demo/zk/thrift*</exclude>
+                            <exclude>me/gaolei/demo/zk/thrift/FeatureThriftService*</exclude>
+                            <!--<exclude>com/example/**/*Test.class</exclude>-->
                         </excludes>
-
                     </instrumentation>
                     <formats>
                         <format>html</format>
