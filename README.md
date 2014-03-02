@@ -77,11 +77,100 @@ feature client 运行过程如下：
 ```
 先从连接master job拿到最优的节点，然后在连接这个最优的节点 extrat feature
 
-	4. 如果master 节点服务停止，系统能自动从现有节点中选择出一个新的节点作为master。 （10分）
+### 4 如果master 节点服务停止，系统能自动从现有节点中选择出一个新的节点作为master。 ###
+首先在new zookeeper的时候，注册watcher，监控所有在/worker目下的children
+```
+zk = new ZooKeeper(zkHostPort, 35000, this);
+// watch all children  of work node
+zk.getChildren(Variable.WORK_PATH, true);
+```
+然后如果/worker下的节点发生变化，就会出发master节点和load balance的变化：
+```
+@Override
+public void process(WatchedEvent event) {
+if (event.getType() == Event.EventType.NodeChildrenChanged
+        && (Variable.WORK_PATH).equals(event.getPath())) {
+	try {
+	updateServerList();
+	} catch (Exception e) {
+	e.printStackTrace();
+	}
+}
+}
 
-	5. master 选择feature job给client使用的策略. 最低要求：只实现一个从现有可用的job中随机选取的策略 (10分)（更优的选择策略最多有10分加分）
+/**
+* update load balance and master node if the children of work node changed
+*
+* @throws Exception
+*/
+private void updateServerList() throws Exception {
+	Vector<String> serverIdList = new Vector<String>();
+	List<String> subList = zk.getChildren(Variable.WORK_PATH, true);
+	for (String subNode : subList) {
+	    serverIdList.add(subNode);
+	}
+	
+	LoadBalance.update(serverIdList);
+	masterSelector.update(serverIdList);
+}
+```
 
-	6. 代码整洁，模块划分清晰，核心代碼单元测试代码覆盖率要超過50%, 提交具體數值和證據（10分）。 
+###	5. master 选择feature job给client使用的策略. 最低要求：只实现一个从现有可用的job中随机选取的策略###
+```
+public class LoadBalance {
+    static Vector<String> thriftList = new Vector<String>();
 
-	7. 将代码整理好，放到自己的git repository中，java工程必须是maven工程。保证代码是可以run的 (10分）
+
+    public static void update(Vector<String> thriftList) {
+        System.out.println("lb update:\t" + thriftList);
+        LoadBalance.thriftList = thriftList;
+    }
+
+    public static String get() {
+
+        int index = new Random().nextInt(thriftList.size());
+        return thriftList.get(index);
+    }
+}
+
+```
+
+### 6. 代码整洁，模块划分清晰，核心代碼单元测试代码覆盖率要超過50%, 提交具體數值和證據 ###
+增加codehaus plugin， 并且吧thrift自动生成的代码去掉
+```
+ <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <instrumentation>
+                        <ignores>
+                            <ignore>me/gaolei/demo/zk/thrift/FeatureThriftService*</ignore>
+                        </ignores>
+                        <excludes>
+                            <exclude>me/gaolei/demo/zk/thrift/FeatureThriftService*</exclude>
+                        </excludes>
+                    </instrumentation>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check/>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+```
+
+###7. 将代码整理好，放到自己的git repository中，java工程必须是maven工程。保证代码是可以run的 ###
+
+run feature client:
+	* me.gaolei.demo.zk.client.ClientMain
+run feature server:
+	* me.gaolei.demo.zk.server.ServerMain 
 	
