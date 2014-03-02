@@ -169,8 +169,9 @@ public class LoadBalance {
 
 ###7. 将代码整理好，放到自己的git repository中，java工程必须是maven工程。保证代码是可以run的 ###
 
-run feature client:
+* run feature client:
 	* me.gaolei.demo.zk.client.ClientMain
-run feature server:
-	* me.gaolei.demo.zk.server.ServerMain 
+* run feature server:
+	* me.gaolei.demo.zk.server.ServerMain  需要带上 thrift port 参数
+	
 	
