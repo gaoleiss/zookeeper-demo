@@ -28,10 +28,10 @@ public class Worker implements Watcher {
 
             // create work node and master node in zookeeper
             if (zk.exists(Variable.WORK_PATH, null) == null) {
-                zk.create(Variable.WORK_PATH, "thrift_port:thrift_host".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                zk.create(Variable.WORK_PATH, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             }
             if (zk.exists(Variable.MASTER_PATH, null) == null) {
-                zk.create(Variable.MASTER_PATH, "thrift_port:thrift_host".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                zk.create(Variable.MASTER_PATH, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             }
 
             // watch all children  of work node
@@ -90,6 +90,11 @@ public class Worker implements Watcher {
         }
     }
 
+    /**
+     * update load balance and master node if the children of work node changed
+     *
+     * @throws Exception
+     */
     private void updateServerList() throws Exception {
         Vector<String> serverIdList = new Vector<String>();
         List<String> subList = zk.getChildren(Variable.WORK_PATH, true);
