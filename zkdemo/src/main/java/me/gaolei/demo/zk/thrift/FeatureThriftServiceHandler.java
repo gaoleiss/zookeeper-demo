@@ -1,5 +1,6 @@
 package me.gaolei.demo.zk.thrift;
 
+import me.gaolei.demo.zk.utils.LoadBalance;
 import org.apache.thrift.TException;
 
 /**
@@ -8,12 +9,12 @@ import org.apache.thrift.TException;
 public class FeatureThriftServiceHandler implements FeatureThriftService.Iface {
     @Override
     public void extractFeature() throws TException {
-
+        System.out.println("extract feature...");
     }
 
     @Override
     public String getHostPort() throws TException {
-        return null;
+        return LoadBalance.get();
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.Enumeration;
 /**
  * Created by lei on 3/2/14.
  */
-public class ServiceNetWorkUtils {
+public class NetWorkUtils {
     public static String getLocalIp() {
         String ret = null;
         try {

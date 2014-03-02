@@ -14,7 +14,20 @@ public class ThriftServer {
 
     TServer server;
 
-    public void start(int port) throws TTransportException {
+    public void start(final int port) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    startServer(port);
+                } catch (TTransportException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    public void startServer(int port) throws TTransportException {
 
         TServerTransport serverTransport = new TServerSocket(port);
         TProcessor processor = new FeatureThriftService.Processor<FeatureThriftServiceHandler>(new FeatureThriftServiceHandler());
@@ -32,7 +45,5 @@ public class ThriftServer {
         }
     }
 
-    public static void main(String[] args) throws TTransportException {
-        new ThriftServer().start(9090);
-    }
+
 }

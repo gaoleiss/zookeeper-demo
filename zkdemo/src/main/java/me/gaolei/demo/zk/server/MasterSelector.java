@@ -17,7 +17,7 @@ public class MasterSelector {
         this.zk = zk;
     }
 
-    String getMasterServerId() throws KeeperException, InterruptedException {
+    public String getMaster() throws KeeperException, InterruptedException {
 
         return new String(zk.getData(Variable.MASTER_PATH, false, null));
 
@@ -25,12 +25,12 @@ public class MasterSelector {
 
     void setMasterServerId(String serverId) throws KeeperException, InterruptedException {
         zk.setData(Variable.MASTER_PATH, serverId.getBytes(), -1);
-        System.out.println("master serverId:\t" + serverId);
+        System.out.println("master update:\t" + serverId);
     }
 
     boolean isMasterExists() throws KeeperException, InterruptedException {
         boolean ret = false;
-        String masterServerId = getMasterServerId();
+        String masterServerId = getMaster();
 
         for (String child : zk.getChildren(Variable.WORK_PATH, false)) {
             if (child.equals(masterServerId)) {

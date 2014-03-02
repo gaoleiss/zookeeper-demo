@@ -7,14 +7,32 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by lei on 3/2/14.
  */
 public class ThriftClient {
+    static Map<String, FeatureThriftService.Client> clientMap = new HashMap<>();
+    private static Object sync = new Object();
 
-    public static void ping(String hostPort) {
+    private FeatureThriftService.Client getClient(String hostPort) {
+        FeatureThriftService.Client client = clientMap.get(hostPort);
 
-        TSocket tSocket = new TSocket("localhost", 9090);
+        if (client == null) {
+            synchronized (sync) {
+                if (client == null) {
+                    client = connect(hostPort);
+                    clientMap.put(hostPort, client);
+                }
+            }
+        }
+        return client;
+    }
+
+    private FeatureThriftService.Client connect(String hostPort) {
+        TSocket tSocket = new TSocket(hostPort.split(":")[0], Integer.valueOf(hostPort.split(":")[1]));
         try {
             tSocket.open();
         } catch (TTransportException e) {
@@ -23,8 +41,12 @@ public class ThriftClient {
 
         TProtocol protocol = new TBinaryProtocol(tSocket);
         FeatureThriftService.Client client = new FeatureThriftService.Client(protocol);
+        return client;
+    }
 
+    public void ping(String hostPort) {
 
+        FeatureThriftService.Client client = getClient(hostPort);
         try {
             client.ping();
         } catch (TException e) {
@@ -33,7 +55,26 @@ public class ThriftClient {
 
     }
 
-    public static void main(String[] args) {
-        ping("");
+    public String getHostPort(String hostPort) {
+
+        FeatureThriftService.Client client = getClient(hostPort);
+        try {
+            return client.getHostPort();
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+    public void extractFeature(String hostPort) {
+
+        FeatureThriftService.Client client = getClient(hostPort);
+        try {
+            client.extractFeature();
+        } catch (TException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

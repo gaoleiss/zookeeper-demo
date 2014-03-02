@@ -1,5 +1,6 @@
 package me.gaolei.demo.zk.utils;
 
+import java.util.Random;
 import java.util.Vector;
 
 /**
@@ -8,19 +9,22 @@ import java.util.Vector;
 public class LoadBalance {
     static Vector<String> thriftList = new Vector<String>();
 
-    public void add(String thriftHostPort) {
+    public static void add(String thriftHostPort) {
         thriftList.add(thriftHostPort);
     }
 
-    public void remove(String thriftHostPort) {
+    public static void remove(String thriftHostPort) {
         thriftList.remove(thriftHostPort);
     }
 
-    public void update(Vector<String> thriftList) {
+    public static void update(Vector<String> thriftList) {
+        System.out.println("lb update:\t" + thriftList);
         LoadBalance.thriftList = thriftList;
     }
 
-    public String get() {
-        return thriftList.get(0);
+    public static String get() {
+
+        int index = new Random().nextInt(thriftList.size());
+        return thriftList.get(index);
     }
 }

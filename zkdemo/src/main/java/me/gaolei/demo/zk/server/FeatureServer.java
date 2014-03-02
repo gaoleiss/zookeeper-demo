@@ -3,30 +3,29 @@ package me.gaolei.demo.zk.server;
 import me.gaolei.demo.zk.Variable;
 import me.gaolei.demo.zk.thrift.ThriftServer;
 import me.gaolei.demo.zk.utils.LoadBalance;
+import me.gaolei.demo.zk.utils.NetWorkUtils;
 import org.apache.zookeeper.*;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 /**
  * Created by lei on 3/1/14.
  */
-public class Server implements Watcher {
+public class FeatureServer implements Watcher {
 
 
     private ZooKeeper zk;
     private String serverId;
     private MasterSelector masterSelector;
-    private LoadBalance loadBalance = new LoadBalance();
     private int thriftPort;
     private ThriftServer thriftServer = new ThriftServer();
 
-    public Server(String zkHostPort, int thriftPort) {
+
+    public FeatureServer(String zkHostPort, int thriftPort) {
         this.thriftPort = thriftPort;
         try {
             // connect to zookeeper
-            serverId = Integer.toString(new Random().nextInt());
             zk = new ZooKeeper(zkHostPort, 35000, this);
 
             // create work node and master node in zookeeper
@@ -47,20 +46,23 @@ public class Server implements Watcher {
     }
 
     public void start() throws Exception {
-
+        serverId = NetWorkUtils.getLocalIp() + ":" + thriftPort;
         //register to zookeeper
         register();
 
         // start thrift server
+        thriftServer.startServer(thriftPort);
 
-        thriftServer.start(thriftPort);
 
     }
 
     public void close() throws InterruptedException {
         zk.close();
         thriftServer.stop();
+    }
 
+    public String getMaster() throws KeeperException, InterruptedException {
+        return masterSelector.getMaster();
     }
 
     private void register() {
@@ -104,8 +106,8 @@ public class Server implements Watcher {
         for (String subNode : subList) {
             serverIdList.add(subNode);
         }
-        System.out.println("lb:\t" + serverIdList);
-        loadBalance.update(serverIdList);
+
+        LoadBalance.update(serverIdList);
         masterSelector.update(serverIdList);
     }
 
