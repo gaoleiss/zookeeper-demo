@@ -85,7 +85,7 @@ zk = new ZooKeeper(zkHostPort, 35000, this);
 // watch all children  of work node
 zk.getChildren(Variable.WORK_PATH, true);
 ```
-然后如果/worker下的节点发生变化，就会出发master节点和load balance的变化：
+然后如果/worker下的节点发生变化（增加或者减少），就会出发master节点和load balance的变化：
 ```
 @Override
 public void process(WatchedEvent event) {
